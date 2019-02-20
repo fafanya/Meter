@@ -4,7 +4,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-	<SurfaceView
+	 <SurfaceView
       android:id="@+id/surfaceView_Photo"
       android:layout_height="match_parent"
       android:layout_width="match_parent" />
@@ -15,4 +15,24 @@
                 android:layout_height="match_parent"
 				android:alpha="0.5"
                 android:src="@drawable/meterfocus" />
+
+
+
+	<RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:alpha="0.9"
+            android:background="@android:color/black">
+
+            <ImageView
+                android:id="@+id/imageView_foto"
+                android:layout_width="50dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/camera" />
+
+        </RelativeLayout>
 </RelativeLayout>

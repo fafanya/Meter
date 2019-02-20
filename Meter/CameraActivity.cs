@@ -39,6 +39,17 @@ namespace Meter
         public Display d;
         public int screenhgt, screenwdh;
         public ProgressDialog dialog;
+        public ImageView fotoButton;
+
+        public class OnClickListener : Java.Lang.Object, View.IOnClickListener
+        {
+            public CameraActivity Parent { get; set; }
+
+            public void OnClick(View v)
+            {
+                Parent.onBack();
+            }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,7 +57,13 @@ namespace Meter
             SetContentView(Resource.Layout.activity_camera);
             // Create your application here
             image = FindViewById<ImageView>(Resource.Id.imageView_Photo);
+            fotoButton = FindViewById<ImageView>(Resource.Id.imageView_foto);
             preview = FindViewById<SurfaceView>(Resource.Id.surfaceView_Photo);
+
+            fotoButton.SetOnClickListener(new OnClickListener()
+            {
+                Parent = this
+            });
 
             previewHolder = preview.Holder;
             previewHolder.AddCallback(
@@ -126,70 +143,24 @@ namespace Meter
 
         public void onPictureTake(byte[] data, Camera camera)
         {
-            bmp = BitmapFactory.DecodeByteArray(data, 0, data.Length);
-            mutableBitmap = bmp.Copy(Bitmap.Config.Argb8888, true);
-            savePhoto(mutableBitmap);
+            ContextWrapper cw = new ContextWrapper(ApplicationContext);
+            imageFileFolder = cw.GetExternalFilesDir(Android.OS.Environment.DirectoryPictures);
+
+            Calendar c = Calendar.Instance;
+            imageFileName = new Java.IO.File(imageFileFolder, c.Time.Seconds + ".bmp");
+            imageFileName.CreateNewFile();
+
+            using (var os = new FileStream(imageFileName.AbsolutePath, FileMode.Create))
+            {
+                os.Write(data, 0, data.Length);
+            }
             dialog.Dismiss();
         }
 
-        public void savePhoto(Bitmap bmp)
-        {
-            imageFileFolder = new Java.IO.File(Android.OS.Environment.ExternalStorageDirectory, "Rotate");
-            imageFileFolder.Mkdir();
-            FileStream _out = null;
-            Calendar c = Calendar.Instance;
-            String date = fromInt(c.Get(Calendar.Month)) + fromInt(c.Get(Calendar.DayOfMonth)) +
-                fromInt(c.Get(Calendar.Year)) + fromInt(c.Get(Calendar.HourOfDay)) + fromInt(c.Get(Calendar.Minute)) + fromInt(c.Get(Calendar.Second));
-            try
-            {
-                string path = System.IO.Path.Combine(
-                    Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).AbsolutePath,
-                    date.ToString() + ".jpg");
 
-                _out = new FileStream(path, FileMode.Open);
-                bmp.Compress(Bitmap.CompressFormat.Jpeg, 100, _out);
-                _out.Flush();
-                _out.Close();
-                scanPhoto(imageFileName.ToString());
-                _out = null;
-            }
-            catch (Exception e)
-            {
-            }
-        }
-
-        public void scanPhoto(String imageFileName)
-        {
-            msConn = new MediaScannerConnection(this, new MediaScannerConnectionClient()
-            {
-                Conn = msConn,
-                Parent = this,
-                imageFileName = imageFileName
-            });
-            msConn.Connect();
-        }
-
-
-    public String fromInt(int val)
+        public String fromInt(int val)
         {
             return val.ToString();
-        }
-    }
-
-    public class MediaScannerConnectionClient : Java.Lang.Object, MediaScannerConnection.IMediaScannerConnectionClient
-    {
-        public MediaScannerConnection Conn { get; set; }
-        public CameraActivity Parent { get; set; }
-        public string imageFileName { get; set; }
-
-        public void OnMediaScannerConnected()
-        {
-            Conn.ScanFile(imageFileName, null);
-        }
-
-        public void OnScanCompleted(string path, Android.Net.Uri uri)
-        {
-            Conn.Disconnect();
         }
     }
 
@@ -214,8 +185,6 @@ namespace Meter
                             Parent.onPictureTake(data, camera);
                         });
                     })).Start();
-
-                throw new NotImplementedException();
         }
     }
 
@@ -232,6 +201,8 @@ namespace Meter
             if (size != null)
             {
                 parameters.SetPreviewSize(size.Width, size.Height);
+                parameters.SetPictureSize(size.Width, size.Height);
+                parameters.SetRotation(90);
                 Parent.camera.SetParameters(parameters);
                 Parent.camera.StartPreview();
                 Parent.inPreview = true;
@@ -253,13 +224,9 @@ namespace Meter
 
         public void SurfaceDestroyed(ISurfaceHolder holder)
         {
-            throw new NotImplementedException();
         }
     }
 }
-
-
-
 
 
 /*using System;
