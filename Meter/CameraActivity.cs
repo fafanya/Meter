@@ -21,6 +21,10 @@ using Android.Util;
 using Android.Graphics.Drawables;
 using static Android.Views.View;
 
+using Tesseract;
+using Tesseract.Droid;
+using System.Threading.Tasks;
+
 namespace Meter
 {
     [Activity(Label = "CameraActivity")]
@@ -385,7 +389,7 @@ namespace Meter
         inPreview = false;
     }
 
-    public void onPictureTake(byte[] data, Camera camera)
+    public async Task onPictureTakeAsync(byte[] data, Camera camera)
     {
             /*ContextWrapper cw = new ContextWrapper(ApplicationContext);
             imageFileFolder = cw.GetExternalFilesDir(Android.OS.Environment.DirectoryPictures);
@@ -399,6 +403,15 @@ namespace Meter
                 os.Write(data, 0, data.Length);
             }
             */
+            TesseractApi tesseractApi = new TesseractApi(ApplicationContext, AssetsDeployment.OncePerInitialization);
+            if (!tesseractApi.Initialized)
+                await tesseractApi.Init("eng");
+            var tessResult = await tesseractApi.SetImage(data);
+            if (tessResult)
+            {
+                var a = tesseractApi.Text;
+                var b = a;
+            }
 
             Bitmap cameraBitmap = BitmapFactory.DecodeByteArray(data, 0, data.Length);
             int wid = cameraBitmap.Width;
@@ -463,14 +476,14 @@ public class PictureCallback : Java.Lang.Object, Camera.IPictureCallback
                 new ThreadStart(
                     delegate
                     {
-                        Parent.RunOnUiThread(() =>
+                        Parent.RunOnUiThread(async () =>
                         {
                             try
                             {
                                 Thread.Sleep(1000);
                             }
                             catch (Exception ex) { }
-                            Parent.onPictureTake(data, camera);
+                            await Parent.onPictureTakeAsync(data, camera);
                         });
                     })).Start();
         }

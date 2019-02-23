@@ -26,6 +26,8 @@ namespace Meter
 		
 		public static void UpdateIdValues()
 		{
+			global::Tesseract.Droid.Resource.String.ApplicationName = global::Meter.Resource.String.ApplicationName;
+			global::Tesseract.Droid.Resource.String.Hello = global::Meter.Resource.String.Hello;
 		}
 		
 		public partial class Animation
@@ -3253,6 +3255,12 @@ namespace Meter
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f090028
+			public const int ApplicationName = 2131296296;
+			
+			// aapt resource value: 0x7f090027
+			public const int Hello = 2131296295;
+			
 			// aapt resource value: 0x7f090000
 			public const int abc_action_bar_home_description = 2131296256;
 			
@@ -3340,11 +3348,11 @@ namespace Meter
 			// aapt resource value: 0x7f090010
 			public const int abc_toolbar_collapse_description = 2131296272;
 			
-			// aapt resource value: 0x7f09002a
-			public const int action_settings = 2131296298;
+			// aapt resource value: 0x7f09002c
+			public const int action_settings = 2131296300;
 			
-			// aapt resource value: 0x7f090027
-			public const int app_name = 2131296295;
+			// aapt resource value: 0x7f090029
+			public const int app_name = 2131296297;
 			
 			// aapt resource value: 0x7f09001e
 			public const int appbar_scrolling_view_behavior = 2131296286;
@@ -3355,11 +3363,11 @@ namespace Meter
 			// aapt resource value: 0x7f090020
 			public const int character_counter_pattern = 2131296288;
 			
-			// aapt resource value: 0x7f090029
-			public const int navigation_drawer_close = 2131296297;
+			// aapt resource value: 0x7f09002b
+			public const int navigation_drawer_close = 2131296299;
 			
-			// aapt resource value: 0x7f090028
-			public const int navigation_drawer_open = 2131296296;
+			// aapt resource value: 0x7f09002a
+			public const int navigation_drawer_open = 2131296298;
 			
 			// aapt resource value: 0x7f090021
 			public const int password_toggle_content_description = 2131296289;
